@@ -36,6 +36,7 @@ class App extends Component {
     this.onComplete = this.onComplete.bind(this);
     this.onRemove = this.onRemove.bind(this);
     this.handleFilter = this.handleFilter.bind(this);
+    this.onClearCompleted = this.onClearCompleted.bind(this);
   }
 
   handleAddItem() {
@@ -96,6 +97,11 @@ class App extends Component {
     this.setSource(newItems, filterItems(this.state.filter, newItems));
   }
 
+  onClearCompleted() {
+    const newItems = filterItems("ACTIVE", this.state.items);
+    this.setSource(newItems, filterItems(this.state.filter, newItems));
+  }
+
   render() {
     return (
       <View style={styles.container}>
@@ -127,6 +133,7 @@ class App extends Component {
           />
         </View>
         <Footer
+          onClearCompleted={this.onClearCompleted}
           count={filterItems("ACTIVE", this.state.items).length}
           onFilter={this.handleFilter}
           filter={this.state.filter}
