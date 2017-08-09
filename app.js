@@ -38,6 +38,8 @@ class App extends Component {
     this.onRemove = this.onRemove.bind(this);
     this.handleFilter = this.handleFilter.bind(this);
     this.onClearCompleted = this.onClearCompleted.bind(this);
+    this.handleUpdateText = this.handleUpdateText.bind(this);
+    this.handleToggleEditing = this.handleToggleEditing.bind(this);
   }
 
   componentWillMount() {
@@ -69,6 +71,29 @@ class App extends Component {
     ];
 
     this.setSource(newItems, filterItems(this.state.filter, newItems), { value: '' });
+  }
+
+  handleUpdateText(key, text) {
+    const newItems = this.state.items.map((item) => {
+      if (item.key !== key) return item;
+      return {
+        ...item,
+        text
+      }
+    });
+    this.setSource(newItems, filterItems(this.state.filter, newItems));
+  }
+
+  handleToggleEditing(key, editing) {
+    const newItems = this.state.items.map((item) => {
+      if (item.key !== key) return item;
+      return {
+        ...item,
+        editing
+      }
+    });
+
+    this.setSource(newItems, filterItems(this.state.filter, newItems));
   }
 
   handleFilter(filter) {
@@ -136,6 +161,8 @@ class App extends Component {
             renderRow={({ key, ...value }) => {
               return (
                 <Row
+                  onUpdate={(text) => this.handleUpdateText(key, text)}
+                  onToggleEdit={(editing) => this.handleToggleEditing(key, editing)}
                   onRemove={() => this.onRemove(key)}
                   onComplete={(complete) => this.onComplete(key, complete)}
                   key={key}
