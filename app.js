@@ -21,6 +21,7 @@ class App extends Component {
     this.onToggleAllComplete = this.onToggleAllComplete.bind(this);
     this.setSource = this.setSource.bind(this);
     this.onComplete = this.onComplete.bind(this);
+    this.onRemove = this.onRemove.bind(this);
   }
 
   handleAddItem() {
@@ -72,6 +73,11 @@ class App extends Component {
     this.setSource(newItems, newItems);
   }
 
+  onRemove(key) {
+    const newItems = this.state.items.filter(item => item.key !== key);
+    this.setSource(newItems, newItems);
+  }
+
   render() {
     return (
       <View style={styles.container}>
@@ -90,6 +96,7 @@ class App extends Component {
             renderRow={({ key, ...value }) => {
               return (
                 <Row
+                  onRemove={() => this.onRemove(key)}
                   onComplete={(complete) => this.onComplete(key, complete)}
                   key={key}
                   {...value}
