@@ -4,6 +4,18 @@ import Header from './header';
 import Footer from './footer';
 import Row from './row';
 
+const filterItems = (filter, items) => {
+  return items.filter((item) => {
+    if (filter === 'ALL') {
+      return true;
+    } else if (filter === 'ACTIVE') {
+      return !item.complete;
+    } else if (filter === 'COMPLETED') {
+      return item.complete;
+    }
+  });
+};
+
 class App extends Component {
   constructor() {
     super();
@@ -14,6 +26,7 @@ class App extends Component {
       value: '',
       items: [],
       allComplete: false,
+      filter: "ALL",
       dataSource: ds.cloneWithRows([])
     };
 
@@ -22,6 +35,7 @@ class App extends Component {
     this.setSource = this.setSource.bind(this);
     this.onComplete = this.onComplete.bind(this);
     this.onRemove = this.onRemove.bind(this);
+    this.handleFilter = this.handleFilter.bind(this);
   }
 
   handleAddItem() {
@@ -38,7 +52,11 @@ class App extends Component {
       }
     ];
 
-    this.setSource(newItems, newItems, { value: '' });
+    this.setSource(newItems, filterItems(this.state.filter, newItems), { value: '' });
+  }
+
+  handleFilter(filter) {
+    this.setSource(this.state.items, filterItems(filter, this.state.items), { filter });
   }
 
   onToggleAllComplete() {
@@ -50,7 +68,7 @@ class App extends Component {
       }
     });
 
-    this.setSource(newItems, newItems, { allComplete: complete });
+    this.setSource(newItems, filterItems(this.state.filter, newItems), { allComplete: complete });
   }
 
   setSource(items, itemsDataSource, otherState = {}) {
@@ -70,12 +88,12 @@ class App extends Component {
       }
     });
 
-    this.setSource(newItems, newItems);
+    this.setSource(newItems, filterItems(this.state.filter, newItems));
   }
 
   onRemove(key) {
     const newItems = this.state.items.filter(item => item.key !== key);
-    this.setSource(newItems, newItems);
+    this.setSource(newItems, filterItems(this.state.filter, newItems));
   }
 
   render() {
@@ -108,7 +126,10 @@ class App extends Component {
             }}
           />
         </View>
-        <Footer/>
+        <Footer
+          onFilter={this.handleFilter}
+          filter={this.state.filter}
+        />
       </View>
     );
   }
